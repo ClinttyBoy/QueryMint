@@ -7,6 +7,9 @@ import { buildGraph, embeddings } from "./chatbot";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Add body parser middleware
+app.use(express.json());
+
 // POST /chat route
 app.post("/chat", async (req: Request, res: Response) => {
   const { prompt, dataUrl } = req.body;

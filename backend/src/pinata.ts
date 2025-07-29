@@ -12,7 +12,8 @@ export const fetchVector = async (dataUrl: string) => {
 
     if (!res.ok) throw Error("Errorin fetching dataFile");
     const data = await res.json();
-    console.log("[vector dat fetched]");
+    console.log(data);
+    console.log("[vector data fetched]");
     return data;
   } catch (error) {
     console.log(error);
