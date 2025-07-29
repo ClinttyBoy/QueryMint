@@ -17,48 +17,8 @@
 /.next/
 /out/
 
-# Environment variables
-.env
-.env.*.local
-
-# TypeScript cache
-*.tsbuildinfo
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Coverage reports
-coverage/
-
-dist/
-
-# IDEs and editors
-.vscode/
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-
 # production
 /build
-
-# PM2 logs
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Optional npm cache directory
-.npm/
-
-# ESLint and Prettier cache
-.eslintcache
-.prettiercache
-
-# Jest cache
-jest-cache/
-jest-config.json
 
 # misc
 .DS_Store
