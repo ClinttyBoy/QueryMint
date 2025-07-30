@@ -3,6 +3,8 @@ import express, { Request, Response } from "express";
 import { fetchVector } from "./pinata";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { buildGraph, embeddings } from "./chatbot";
+import { fetchUserByID, getActiveSubcription, payforQuery } from "./utils";
+import { createAccount } from "./biconomy";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -31,6 +33,20 @@ app.post("/prompt", async (req: Request, res: Response) => {
     return res
       .status(400)
       .json({ error: "Both dataUrl and prompt are required!" });
+  }
+
+  const userID = await fetchUserByID(userId);
+  const smartAccount = await createAccount(userID);
+
+  if (!userID || !smartAccount) {
+    return res.status(400).json({ error: "Unable to find user are required!" });
+  }
+  
+  const saAddress = await smartAccount.getAccountAddress();
+  const isActiveSubscription = await getActiveSubcription(saAddress);
+
+  if (!isActiveSubscription) {
+    await payforQuery(smartAccount);
   }
 
   try {
