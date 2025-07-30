@@ -135,6 +135,7 @@ export default function Service() {
         </Card>
         <RatingChart />
       </div>
+     
     </div>
   );
 }

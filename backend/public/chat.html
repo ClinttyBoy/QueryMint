@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      #wrapper-container {
+        position: relative;
+        width: 300px;
+        height: 400px;
+      }
+
+      #wrapper {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #007bff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        overflow: hidden;
+      }
+
+      #wrapper.open {
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        background: #fff;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #chatbot-container {
+        position: relative;
+        width: 300px;
+        height: 400px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 9999;
+      }
+
+      #chatbox {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message {
+        margin-bottom: 0.75rem;
+        max-width: 80%;
+        padding: 0.5rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        line-height: 1.4;
+      }
+
+      .user {
+        background-color: #cde5ff;
+        align-self: flex-end;
+        border-bottom-right-radius: 0;
+      }
+
+      .bot {
+        background-color: #e9e9e9;
+        align-self: flex-start;
+        border-bottom-left-radius: 0;
+      }
+
+      #input-container {
+        display: flex;
+        padding: 0.5rem;
+        gap: 0.4rem;
+      }
+
+      input {
+        flex: 1;
+        padding: 0.6rem;
+        font-size: 0.8rem;
+        border-radius: 15px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        width: 34px;
+        height: 34px;
+        font-size: 1rem;
+        border-radius: 50%;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #close-btn {
+        position: absolute;
+        top: 5px;
+        right: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper-container">
+      <div id="wrapper" onclick="this.classList.add('open')">
+        <div id="chatbot-container">
+          <span
+            id="close-btn"
+            onclick="event.stopPropagation(); document.getElementById('wrapper').classList.remove('open');"
+          >
+            <svg
+              width="14"
+              height="8"
+              viewBox="0 0 14 8"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M7.7071 7.70685C7.51957 7.89433 7.26526 7.99964 7.0001 7.99964C6.73493 7.99964 6.48063 7.89433 6.2931 7.70685L0.636099 2.04985C0.540589 1.95761 0.464406 1.84726 0.411997 1.72526C0.359588 1.60326 0.332002 1.47204 0.330848 1.33926C0.329694 1.20648 0.354996 1.0748 0.405277 0.951901C0.455558 0.829005 0.529811 0.717352 0.623704 0.623459C0.717597 0.529567 0.829248 0.455314 0.952145 0.405033C1.07504 0.354752 1.20672 0.32945 1.3395 0.330604C1.47228 0.331758 1.6035 0.359344 1.7255 0.411753C1.84751 0.464162 1.95785 0.540344 2.0501 0.635854L7.0001 5.58586L11.9501 0.635854C12.1387 0.453696 12.3913 0.352902 12.6535 0.35518C12.9157 0.357459 13.1665 0.462628 13.3519 0.648036C13.5373 0.833444 13.6425 1.08426 13.6448 1.34645C13.6471 1.60865 13.5463 1.86125 13.3641 2.04985L7.7071 7.70685Z"
+                fill="black"
+              />
+            </svg>
+          </span>
+
+          <div id="chatbox"></div>
+
+          <div id="input-container">
+            <input id="msg" placeholder="Ask something..." />
+            <button onclick="send()">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8 1V15M8 1L15 8M8 1L1 8"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get("userId");
+      const projectId = urlParams.get("projectId");
+      const dataUrl = urlParams.get("dataUrl");
+
+      const chatbox = document.getElementById("chatbox");
+      const input = document.getElementById("msg");
+
+      function appendMessage(text, className) {
+        const div = document.createElement("div");
+        div.className = `message ${className}`;
+        div.textContent = text;
+        chatbox.appendChild(div);
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+
+      async function send() {
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        appendMessage(msg, "user");
+        input.value = "";
+
+        try {
+          const res = await fetch("/prompt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: msg, userId, projectId, dataUrl }),
+          });
+
+          console.log(res);
+          const data = await res.json();
+          appendMessage(data.reply, "bot");
+        } catch (err) {
+          appendMessage("Error: Unable to connect to the server.", "bot");
+          console.error(err);
+        }
+      }
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") send();
+      });
+    </script>
+  </body>
+</html>
