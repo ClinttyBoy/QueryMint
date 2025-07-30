@@ -24,7 +24,9 @@
 # TypeScript cache
 *.tsbuildinfo
 
-.zip    
+# Zip files
+*.zip
+
 # TypeScript cache
 *.tsbuildinfo
 
