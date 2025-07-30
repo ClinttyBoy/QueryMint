@@ -21,7 +21,7 @@
 .env
 .env.*.local
 
-.zip
+*.zip
 
 # TypeScript cache
 *.tsbuildinfo
