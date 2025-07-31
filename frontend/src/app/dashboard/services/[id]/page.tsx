@@ -13,23 +13,45 @@ import { Service as ServiceType } from "@/types/Service";
 import { BotIcon, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RatingChart } from "@/components/rating-chart";
-import { getInitials } from "@/lib/utils";
+import { calculateAvgRating, getInitials } from "@/lib/utils";
+import { RatingEntry } from "@/types/Ratings";
 
 export default function Service() {
+  const { fetchbyServiceId, fetchRatings } = useUserData();
   const [service, setService] = useState<ServiceType | null>(null);
-  const { fetchbyServiceId } = useUserData();
+  const [ratings, setRatings] = useState<RatingEntry[]>([]);
   const { id } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchbyServiceId(id as string);
-      console.log(data.service);
+      // console.log(data.service);
       setService(data.service);
     };
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    const fetchRatingData = async () => {
+      const serviceId = service?.id;
+      if (serviceId) {
+        const ratingData = await fetchRatings(serviceId);
+        setRatings(ratingData);
+
+        const res = await fetch(`/api/fetch-chat/${serviceId}`);
+        const chatData = await res.json();
+        console.log(chatData);
+      }
+    };
+    fetchRatingData();
+  }, [service]);
+
+  const memoizedAvgRating = useMemo(
+    () => calculateAvgRating(ratings),
+    [ratings, service]
+  );
 
   if (!service) {
     return (
@@ -122,7 +144,8 @@ export default function Service() {
           <CardHeader className="w-full flex flex-col gap-3">
             <CardDescription>Rating Overview</CardDescription>
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              4.3<span className="text-base">/5</span>
+              {memoizedAvgRating || 0}
+              <span className="text-base">/5</span>
             </CardTitle>
           </CardHeader>
 
@@ -133,9 +156,8 @@ export default function Service() {
             <div className="text-muted-foreground">Based on 27 reviews</div>
           </CardFooter>
         </Card>
-        <RatingChart />
+        <RatingChart ratings={ratings} />
       </div>
-     
     </div>
   );
 }

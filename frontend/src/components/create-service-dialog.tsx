@@ -101,7 +101,7 @@ function ServiceForm({ open }: { open: boolean }) {
   //   const router = useRouter();
   const [embedCode, setEmbedCode] = useState<string>("");
   const [isLoading, setLoading] = useState<boolean>(false);
-  const { userId } = useUserData();
+  const { userId, fetchServices } = useUserData();
   const [isSuccess, setSuccess] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -167,7 +167,7 @@ function ServiceForm({ open }: { open: boolean }) {
           body: JSON.stringify(payload),
         });
         console.log(res);
-        // setOpen(true);
+        await fetchServices();
         toast(
           `Service created successfully!\n\nYou can now use your chatbot service.`
         );

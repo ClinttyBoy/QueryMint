@@ -1,5 +1,6 @@
 import { createAccount } from "@/lib/biconomy";
 import {
+  GOLD_SKY_ENDPOINT,
   SUBSCRIPTION_CONTRACT_ABI,
   SUBSCRIPTION_CONTRACT_ADDRESS,
 } from "@/lib/constant";
@@ -87,10 +88,12 @@ const UserDataProviderFn = () => {
   }, [smartAccount, address]);
 
   const fetchServices = async () => {
-    const res = await fetch("/api/fetch-service");
-    const data = await res.json();
-    console.log(data);
-    setServices(data.services);
+    if (userId) {
+      const res = await fetch(`/api/fetch-service?userId=${userId}`);
+      const data = await res.json();
+      console.log(data);
+      setServices(data.services);
+    }
   };
 
   const fetchbyServiceId = async (id: string) => {
@@ -123,6 +126,29 @@ const UserDataProviderFn = () => {
     }
   };
 
+  const fetchRatings = async (projectId: string) => {
+    console.log("projectID: " + projectId);
+    const query = `
+      query MyQuery {
+        projectRateds(where: {projectId: "${projectId}"}) {
+          rating
+        }
+      }
+    `;
+
+    const response = await fetch(GOLD_SKY_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    const result = await response.json();
+    // console.log(result.data.projectRateds);
+    return result.data.projectRateds;
+  };
+
   useEffect(() => {
     if (status === "authenticated") {
       initializeSmartAccount();
@@ -143,7 +169,7 @@ const UserDataProviderFn = () => {
 
   useEffect(() => {
     fetchServices();
-  }, []);
+  }, [userId]);
 
   return {
     userId,
@@ -151,12 +177,14 @@ const UserDataProviderFn = () => {
     address,
     balance,
     refreshBalance,
+    fetchServices,
     fetchbyServiceId,
     services,
     subscribeNFTFunc,
     NFTSubscriptionStatus,
     refreshNFTSubscriptionStatus,
     subscriptionExpiry,
+    fetchRatings,
   };
 };
 

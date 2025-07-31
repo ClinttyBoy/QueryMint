@@ -3,12 +3,14 @@ import { supabase } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   try {
-    const id = req.nextUrl.searchParams.get("id");
+    const url = req.nextUrl;
+    const id = url.searchParams.get("id");
+    const userId = url.searchParams.get("userId");
 
     if (id) {
-      // Fetch a single project by id
+      // Fetch a single service by its unique ID
       const { data, error } = await supabase
-        .from("services") // replace with your actual table name
+        .from("services")
         .select("*")
         .eq("id", id)
         .single();
@@ -18,10 +20,21 @@ export async function GET(req: NextRequest) {
       }
 
       return NextResponse.json({ service: data }, { status: 200 });
-    } else {
+    } else if (userId) {
+      // Fetch all services associated with a given user ID
       const { data, error } = await supabase
-        .from("services") // replace with your actual table name
-        .select("*");
+        .from("services")
+        .select("*")
+        .eq("user_id", userId); // Assuming your column is named 'user_id'
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ services: data }, { status: 200 });
+    } else {
+      // Fallback: return all services
+      const { data, error } = await supabase.from("services").select("*");
 
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

@@ -17,14 +17,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-const chartData = [
-  { month: "1", desktop: 186 },
-  { month: "2", desktop: 305 },
-  { month: "3", desktop: 237 },
-  { month: "4", desktop: 73 },
-  { month: "5", desktop: 209 },
-];
+import { RatingEntry } from "@/types/Ratings";
+import { useEffect, useState } from "react";
 
 const chartConfig = {
   desktop: {
@@ -33,7 +27,51 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function RatingChart() {
+type RatingChartProps = {
+  ratings: RatingEntry[];
+};
+
+type chartType = {
+  rating: string;
+  count: number;
+};
+
+export function RatingChart({ ratings }: RatingChartProps) {
+  const [chartData, setChartData] = useState<chartType[] | null>([]);
+
+  const convertChartData = (ratings: RatingEntry[]) => {
+    const counts: { [key: string]: number } = {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+    };
+
+    for (const r of ratings) {
+      if (r.rating in counts) {
+        counts[r.rating] += 1;
+      }
+    }
+
+    return Object.keys(counts).map((rating) => ({
+      rating,
+      count: counts[rating],
+    }));
+  };
+
+  useEffect(() => {
+    const setRatingData = () => {
+      if (ratings) {
+        setChartData(convertChartData(ratings));
+      }
+    };
+    setRatingData();
+  }, [ratings]);
+
+  
+  if (!chartData) return <></>;
+
   return (
     <Card className="gap-0">
       <CardHeader>
@@ -51,7 +89,7 @@ export function RatingChart() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="rating"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -61,7 +99,7 @@ export function RatingChart() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8}>
+            <Bar dataKey="count" fill="var(--color-desktop)" radius={8}>
               <LabelList
                 position="top"
                 offset={12}

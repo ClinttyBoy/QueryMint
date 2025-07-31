@@ -5,6 +5,7 @@ import { createHash } from "crypto";
 import { Document } from "langchain/document";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { Service } from "@/types/Service";
+import { RatingEntry } from "@/types/Ratings";
 
 export type Json =
   | string
@@ -55,7 +56,19 @@ export const fetchUserByID = async (user_id: string) => {
     console.error("Error fetching user:", error);
     return null;
   }
-  // console.log(data?.length === 0 ? "empty" : "not empty");
+  return data;
+};
+
+export const fetchChatbyId = async (service_id: string) => {
+  const { data, error } = await supabase
+    .from("chat-sessions")
+    .select("*")
+    .eq("service_id", service_id);
+
+  if (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
   return data;
 };
 
@@ -178,6 +191,12 @@ export function generateEmbedIframe(
           zIndex: 9999,
         }}
 ></iframe>`;
+}
+
+export function calculateAvgRating(data: RatingEntry[]): number {
+  const numeric = data.map((r) => parseFloat(r.rating));
+  const avg = numeric.reduce((a, b) => a + b, 0) / numeric.length;
+  return parseFloat(avg.toFixed(2));
 }
 
 export const toDate = (timestamp: number) => new Date(timestamp * 1000);
