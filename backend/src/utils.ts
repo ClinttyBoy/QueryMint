@@ -15,6 +15,15 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
+type ChatSession = {
+  id?: string | number;
+  service_id: string;
+  question: string;
+  answer: string;
+  rating?: number;
+  txId?: string;
+};
+
 export interface Database {
   public: {
     Tables: {
@@ -60,6 +69,19 @@ export const fetchUserByID = async (user_id: string) => {
   return data[0].id;
 };
 
+// export const addChatData = async (user_id: string) => {
+  // const { data, error } = await supabase
+  //   .from("chat-sessions")
+  //   .insert([{ service_id}])
+  //   .select();
+  // if (error) {
+  //   console.error("Error fetching user:", error);
+  //   return null;
+  // }
+  // console.log(data[0].id);
+  // return data[0].id;
+// };
+
 export const payforQuery = async (smartAccount: BiconomySmartAccountV2) => {
   const getBalance = await smartAccount.getBalances();
   const balance = formatBalance(getBalance[0].amount, getBalance[0].decimals);
@@ -79,7 +101,7 @@ export const payforQuery = async (smartAccount: BiconomySmartAccountV2) => {
       {
         paymasterServiceData: { mode: PaymasterMode.SPONSORED },
       }
-    );  
+    );
     const { transactionHash } = await tx.waitForTxHash();
     console.log("Transaction Hash", transactionHash);
 

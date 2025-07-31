@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -10,18 +11,32 @@ import {
 } from "@/components/ui/card";
 import { useUserData } from "@/contexts/UserContext";
 import { Service as ServiceType } from "@/types/Service";
-import { BotIcon, ExternalLink } from "lucide-react";
+import {
+  BotIcon,
+  ExternalLink,
+  SquareArrowOutUpRightIcon,
+  Star,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { RatingChart } from "@/components/rating-chart";
 import { calculateAvgRating, getInitials } from "@/lib/utils";
 import { RatingEntry } from "@/types/Ratings";
+import { NftTextIcon } from "@/assets";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function Service() {
   const { fetchbyServiceId, fetchRatings } = useUserData();
   const [service, setService] = useState<ServiceType | null>(null);
   const [ratings, setRatings] = useState<RatingEntry[]>([]);
+  const [chats, setChats] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -42,6 +57,7 @@ export default function Service() {
 
         const res = await fetch(`/api/fetch-chat/${serviceId}`);
         const chatData = await res.json();
+        setChats(chatData);
         console.log(chatData);
       }
     };
@@ -82,7 +98,7 @@ export default function Service() {
 
           <div className="flex flex-col gap-2 mt-2">
             <CardDescription className="text-md">
-              project id : {service.id}
+              service id : {service.id}
             </CardDescription>
             <CardTitle className="text-3xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {service.name}
@@ -130,7 +146,7 @@ export default function Service() {
           <CardHeader className="w-full flex flex-col gap-3">
             <CardDescription>Total customer interactions</CardDescription>
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              85
+              {chats.length}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-3 text-sm">
@@ -158,6 +174,86 @@ export default function Service() {
         </Card>
         <RatingChart ratings={ratings} />
       </div>
+      <h2>Chat History</h2>
+      <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto">
+        {chats && chats.length > 0
+          ? chats
+              // .slice(startIndex, endIndex)
+              .map(({ id, txId, question, answer, rating }) => (
+                <Card className="relative w-full gap-1 p-3" key={id}>
+                  <CardHeader className="px-3">
+                    <h3 className=" m-0 p-0">{question}</h3>
+                    <CardAction className=" flex justify-center">
+                      {txId ? (
+                        <Button variant="ghost" className="w-10 h-10">
+                          <Link
+                            href={`https://explorer-holesky.morphl2.io/tx/${txId}`}
+                            target="_blank"
+                            className=""
+                          >
+                            <SquareArrowOutUpRightIcon />
+                          </Link>
+                        </Button>
+                      ) : (
+                        <Button variant={"ghost"} className="w-10 p-0 h-10">
+                          <img
+                            src={NftTextIcon.src}
+                            alt="NFT Text Icon"
+                            className="h-4 w-4"
+                          />
+                        </Button>
+                      )}
+                      {rating && (
+                        <Button
+                          variant={"ghost"}
+                          className="gap-1 p-0 w-10 h-10 m-0"
+                        >
+                          {rating} <Star />
+                        </Button>
+                      )}
+                    </CardAction>
+                  </CardHeader>
+                  <CardFooter className="px-3">
+                    <p className="text-muted-foreground text-sm m-0 p-0">
+                      {answer}
+                    </p>
+                  </CardFooter>
+                </Card>
+              ))
+          : "No Sessions"}
+      </div>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+            // className={
+            //   startIndex === 0
+            //     ? "pointer-events-none opacity-50"
+            //     : undefined
+            // }
+            // onClick={() => {
+            //   setStartIndex(startIndex - rowsPerPage);
+            //   setEndIndex(endIndex - rowsPerPage);
+            // }}
+            />
+          </PaginationItem>
+
+          <PaginationItem>
+            <PaginationNext
+            // className={
+            //   endIndex === 100
+            //     ? "pointer-events-none opacity-50"
+            //     : undefined
+            // }
+            // onClick={() => {
+            //   setStartIndex(startIndex + rowsPerPage); //10
+            //   setEndIndex(endIndex + rowsPerPage); //10 + 10 = 20
+            // }}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+      <div className="my-1"></div>
     </div>
   );
 }

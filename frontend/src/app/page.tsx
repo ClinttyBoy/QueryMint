@@ -29,6 +29,7 @@ export default function Home() {
         height="400"
         style={{
           position: "fixed",
+          backgroundColor: "transparent",
           bottom: "20px",
           right: "20px",
           border: "none",
