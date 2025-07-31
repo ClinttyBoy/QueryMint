@@ -66,7 +66,7 @@ function PaymentForm({ address, refreshBalance }: PaymentProps) {
       console.error(error);
     } finally {
       setIsProcessing(false);
-      setValue("0.0001");
+      // setValue("0.0001");
     }
   }
 

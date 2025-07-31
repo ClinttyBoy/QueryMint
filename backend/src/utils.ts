@@ -1,6 +1,6 @@
-import { BiconomySmartAccountV2 } from "@biconomy/account";
+import { BiconomySmartAccountV2, PaymasterMode } from "@biconomy/account";
 import { createClient } from "@supabase/supabase-js";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, parseEther } from "viem";
 import { morphHolesky } from "viem/chains";
 import {
   SUBSCRIPTION_CONTRACT_ABI,
@@ -61,16 +61,36 @@ export const fetchUserByID = async (user_id: string) => {
 };
 
 export const payforQuery = async (smartAccount: BiconomySmartAccountV2) => {
-  const tx = await smartAccount.sendTransaction({
-    to: process.env.RECEIVER_ADDRESS!,
-    value: process.env.QUERY_PRICE || 0.0002,
-  });
-  const { transactionHash } = await tx.waitForTxHash();
-  console.log("Transaction Hash", transactionHash);
+  const getBalance = await smartAccount.getBalances();
+  const balance = formatBalance(getBalance[0].amount, getBalance[0].decimals);
+  console.log("balance", balance);
 
-  const userOpReceipt = await tx.wait();
-  console.log("Transaction Receipt", userOpReceipt);
-  // return tx;
+  if (Number(balance) < Number(process.env.QUERY_PRICE || 0.0002)) {
+    console.log("Insufficient balance");
+    return false;
+  }
+
+  try {
+    const tx = await smartAccount.sendTransaction(
+      {
+        to: process.env.RECEIVER_ADDRESS!,
+        value: parseEther(process.env.QUERY_PRICE?.toString() || "0.0002"),
+      },
+      {
+        paymasterServiceData: { mode: PaymasterMode.SPONSORED },
+      }
+    );  
+    const { transactionHash } = await tx.waitForTxHash();
+    console.log("Transaction Hash", transactionHash);
+
+    const userOpReceipt = await tx.wait();
+    console.log("Transaction Status: ", userOpReceipt.success);
+    return true;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Transaction Error:", error);
+    }
+  }
 };
 // ***************************************** || 0.001*******
 
@@ -89,3 +109,22 @@ export const getActiveSubcription = async (userAddress: string) => {
 
   return data;
 };
+
+export function formatBalance(
+  amount: bigint | string,
+  decimals: number,
+  precision = 6
+) {
+  const amt = typeof amount === "bigint" ? amount : BigInt(amount);
+  const divisor = BigInt(10) ** BigInt(decimals);
+  const whole = amt / divisor;
+  const fraction = amt % divisor;
+  // Get the fraction as a string, padded with zeros
+  let fractionStr = fraction
+    .toString()
+    .padStart(decimals, "0")
+    .slice(0, precision);
+  // Remove trailing zeros
+  fractionStr = fractionStr.replace(/0+$/, "");
+  return `${whole.toString()}${fractionStr ? "." + fractionStr : ""}`;
+}

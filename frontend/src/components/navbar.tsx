@@ -22,13 +22,15 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { SubscriptionBtn } from "./subscription-card-dropdown";
 import NFtSubscriptionDialog from "./nft-subscription-dislog";
 import { useUserData } from "@/contexts/UserContext";
-import { toDate } from "@/lib/utils";
+import { formatBalance, toDate } from "@/lib/utils";
 import {
   SUBSCRIPTION_CONTRACT_ABI,
   SUBSCRIPTION_CONTRACT_ADDRESS,
 } from "@/lib/constant";
 import { readContract } from "@wagmi/core";
 import { wagmiConfig } from "@/lib/wagmiConfig";
+import { parseEther } from "viem";
+import { PaymasterMode } from "@biconomy/account";
 
 interface MenuItem {
   title: string;
@@ -76,7 +78,8 @@ const Navbar = ({
   },
 }: NavbarProps) => {
   const { data: session } = useSession();
-  const { subscriptionExpiry, NFTSubscriptionStatus } = useUserData();
+  const { subscriptionExpiry, NFTSubscriptionStatus, smartAccount } =
+    useUserData();
 
   const user = {
     name: session?.user?.name ?? "Anonymous",
@@ -85,13 +88,35 @@ const Navbar = ({
   };
 
   const handleTemp = async () => {
-    const result = await readContract(wagmiConfig, {
-      abi: SUBSCRIPTION_CONTRACT_ABI,
-      address: SUBSCRIPTION_CONTRACT_ADDRESS,
-      functionName: "getExpiry",
-      args: ["0x73b3017f79F96CAb01d7139Cf259EC899c70a64C"],
-    });
-    console.log("Subscription expiry", result);
+    if (!smartAccount) return;
+
+    const getBalance = await smartAccount.getBalances();
+    const balance = formatBalance(getBalance[0].amount, getBalance[0].decimals);
+    console.log("balance", balance);
+    if (Number(balance) < 0.0002) {
+      return false;
+    }
+    try {
+      const tx = await smartAccount.sendTransaction(
+        {
+          to: "0x77B708A7102A2e905a056BFC34d82631138918CC",
+          value: parseEther("0.0002"),
+        },
+        {
+          paymasterServiceData: { mode: PaymasterMode.SPONSORED },
+        }
+      );
+      const { transactionHash } = await tx.waitForTxHash();
+      console.log("Transaction Hash", transactionHash);
+
+      const userOpReceipt = await tx.wait();
+      console.log("Transaction Receipt", userOpReceipt);
+      return true;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Transaction Error:", error);
+      }
+    }
   };
   return (
     <section className="w-full px-6 py-4 mb-6 border dark:border-slate-700/70">
@@ -134,9 +159,9 @@ const Navbar = ({
             )}
 
             <TopupWalletDialog />
-            {/* <Button variant="outline" size="icon" onClick={handleTemp}>
+            <Button variant="outline" size="icon" onClick={handleTemp}>
               temp
-            </Button> */}
+            </Button>
             <UserBtn user={user} />
           </div>
         </nav>

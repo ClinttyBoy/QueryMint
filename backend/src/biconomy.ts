@@ -1,15 +1,11 @@
-
 import { BiconomySmartAccountV2 } from "@biconomy/account";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { morphHolesky } from "viem/chains";
 
 export const createAccount = async (index: number) => {
-
   try {
-    const account = privateKeyToAccount(
-      `0x${process.env.PRIVATE_KEY}`
-    );
+    const account = privateKeyToAccount(`0x${process.env.PRIVATE_KEY}`);
 
     const client = createWalletClient({
       account,
@@ -17,14 +13,12 @@ export const createAccount = async (index: number) => {
       transport: http(),
     });
 
-
-    const config = {
+    const smartAccount = await BiconomySmartAccountV2.create({
       signer: client,
       index,
       bundlerUrl: process.env.BUNDLER_URL!,
-    };
-
-    const smartAccount = await BiconomySmartAccountV2.create(config);
+      paymasterUrl: process.env.PAYMASTER_URL!,
+    });
     //   setSmartAccount(smartAccount);
 
     return smartAccount;

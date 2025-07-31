@@ -36,17 +36,27 @@ app.post("/prompt", async (req: Request, res: Response) => {
   }
 
   const userID = await fetchUserByID(userId);
+  console.log("userIndex", userID);
   const smartAccount = await createAccount(userID);
 
   if (!userID || !smartAccount) {
     return res.status(400).json({ error: "Unable to find user are required!" });
   }
-  
+
   const saAddress = await smartAccount.getAccountAddress();
+  console.log("address", saAddress);
   const isActiveSubscription = await getActiveSubcription(saAddress);
 
   if (!isActiveSubscription) {
-    await payforQuery(smartAccount);
+    console.log("paying for query");
+    const result = await payforQuery(smartAccount);
+    if (!result) {
+      return res
+        .status(400)
+        .json({ reply: "Please add funds to your QueryMint account!" });
+    }
+  } else {
+    console.log("active subscription");
   }
 
   try {
