@@ -59,6 +59,7 @@ export const fetchUserByID = async (user_id: string) => {
   return data;
 };
 
+
 export const fetchChatbyId = async (service_id: string) => {
   const { data, error } = await supabase
     .from("chat-sessions")

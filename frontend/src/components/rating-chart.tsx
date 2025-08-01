@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 const chartConfig = {
   desktop: {
     label: "Desktop",
-    color: "var(--chart-1)",
+    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 

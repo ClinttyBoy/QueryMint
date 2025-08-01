@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { logoIconWhite } from "@/assets";
 // import { Logowhite1 } from "@/assets";
 
 export function LoginForm({
@@ -38,8 +39,8 @@ export function LoginForm({
               href="#"
               className="flex flex-col items-center gap-2 font-medium"
             >
-              <div className="flex items-center size-36 justify-center rounded-md">
-                {/* <img src={Logowhite1.src} /> */}
+              <div className="flex items-center w-60 my-4 justify-center rounded-md">
+                <img src={logoIconWhite.src} />
               </div>
               <span className="sr-only">QueryMint</span>
             </a>

@@ -40,11 +40,14 @@ import {
 import { RATING_CONTRACT_ADDRESS } from "@/lib/constant";
 import { DeleteServiceDialog } from "@/components/delete-service-dialog";
 
+const rowsPerPage = 3;
 export default function Service() {
   const { fetchbyServiceId, fetchRatings, userId } = useUserData();
   const [chatbotActive, setChatBotActive] = useState<Boolean>(false);
   const [service, setService] = useState<ServiceType | null>(null);
   const [ratings, setRatings] = useState<RatingEntry[]>([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(rowsPerPage);
   const [chats, setChats] = useState<any[] | null>([]);
   const { id } = useParams();
 
@@ -55,14 +58,14 @@ export default function Service() {
       setService(data.service);
     };
     fetchData();
-  }, [id]);
+  }, [id, setChatBotActive]);
 
   useEffect(() => {
     const fetchRatingData = async () => {
       const serviceId = service?.id;
       if (serviceId) {
         const ratingData = await fetchRatings(serviceId);
-  
+
         setRatings(ratingData);
         const chatData = await fetchChatbyId(serviceId);
         console.log(chatData);
@@ -70,7 +73,7 @@ export default function Service() {
       }
     };
     fetchRatingData();
-  }, [service]);
+  }, [service, setChatBotActive]);
 
   const memoizedAvgRating = useMemo(
     () => calculateAvgRating(ratings),
@@ -284,29 +287,25 @@ export default function Service() {
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-            // className={
-            //   startIndex === 0
-            //     ? "pointer-events-none opacity-50"
-            //     : undefined
-            // }
-            // onClick={() => {
-            //   setStartIndex(startIndex - rowsPerPage);
-            //   setEndIndex(endIndex - rowsPerPage);
-            // }}
+              className={
+                startIndex === 0 ? "pointer-events-none opacity-50" : undefined
+              }
+              onClick={() => {
+                setStartIndex(startIndex - rowsPerPage);
+                setEndIndex(endIndex - rowsPerPage);
+              }}
             />
           </PaginationItem>
 
           <PaginationItem>
             <PaginationNext
-            // className={
-            //   endIndex === 100
-            //     ? "pointer-events-none opacity-50"
-            //     : undefined
-            // }
-            // onClick={() => {
-            //   setStartIndex(startIndex + rowsPerPage); //10
-            //   setEndIndex(endIndex + rowsPerPage); //10 + 10 = 20
-            // }}
+              className={
+                endIndex === 100 ? "pointer-events-none opacity-50" : undefined
+              }
+              onClick={() => {
+                setStartIndex(startIndex + rowsPerPage);
+                setEndIndex(endIndex + rowsPerPage);
+              }}
             />
           </PaginationItem>
         </PaginationContent>

@@ -60,23 +60,7 @@ interface NavbarProps {
   };
 }
 
-const Navbar = ({
-  menu = [
-    { title: "Home", url: "#" },
-    {
-      title: "Products",
-      url: "#",
-    },
-    {
-      title: "Resources",
-      url: "#",
-    },
-  ],
-  auth = {
-    login: { title: "Login", url: "#" },
-    signup: { title: "Sign up", url: "#" },
-  },
-}: NavbarProps) => {
+const Navbar = ({ menu = [{ title: "Home", url: "/" }] }: NavbarProps) => {
   const { data: session } = useSession();
   const { subscriptionExpiry, NFTSubscriptionStatus, smartAccount } =
     useUserData();
@@ -87,39 +71,6 @@ const Navbar = ({
     image: session?.user?.image ?? "",
   };
 
-  const handleTemp = async () => {
-    if (!smartAccount) return;
-
-    const getBalance = await smartAccount.getBalances();
-    const balance = formatBalance(getBalance[0].amount, getBalance[0].decimals);
-    console.log("balance", balance);
-    if (Number(balance) < 0.0002) {
-      return false;
-    }
-    try {
-      const tx = await smartAccount.sendTransaction(
-        {
-          to: "0x77B708A7102A2e905a056BFC34d82631138918CC",
-          value: parseEther("0.0002"),
-        },
-        {
-          paymasterServiceData: { mode: PaymasterMode.SPONSORED },
-        }
-      );
-      const { transactionHash } = await tx.waitForTxHash();
-      console.log("Transaction Hash", transactionHash);
-
-      const userOpReceipt = await tx.wait();
-      console.log("Transaction Receipt", userOpReceipt);
-      return true;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Transaction Error:", error);
-      }
-    }
-  };
-
-  // console.log(`${Date.now()}-${Math.floor(Math.random() * 1000)}`);
   return (
     <section className="w-full px-6 py-4 mb-6 border dark:border-slate-700/70">
       <div className="w-full ">
@@ -134,9 +85,12 @@ const Navbar = ({
             </Link>
             <div className="flex items-center">
               <NavigationMenu>
-                <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
-                </NavigationMenuList>
+                <NavigationMenuLink
+                  href={"/dashboard"}
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
+                >
+                  Dashboard
+                </NavigationMenuLink>
               </NavigationMenu>
             </div>
           </div>
@@ -195,29 +149,6 @@ const renderMenuItem = (item: MenuItem) => {
         {item.title}
       </NavigationMenuLink>
     </NavigationMenuItem>
-  );
-};
-
-const renderMobileMenuItem = (item: MenuItem) => {
-  if (item.items) {
-    return (
-      <AccordionItem key={item.title} value={item.title} className="border-b-0">
-        <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-          {item.title}
-        </AccordionTrigger>
-        <AccordionContent className="mt-2">
-          {item.items.map((subItem) => (
-            <SubMenuLink key={subItem.title} item={subItem} />
-          ))}
-        </AccordionContent>
-      </AccordionItem>
-    );
-  }
-
-  return (
-    <a key={item.title} href={item.url} className="text-md font-semibold">
-      {item.title}
-    </a>
   );
 };
 
