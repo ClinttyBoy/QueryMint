@@ -161,9 +161,7 @@ const Navbar = ({
             )}
 
             <TopupWalletDialog />
-            <Button variant="outline" size="icon" onClick={handleTemp}>
-              temp
-            </Button>
+
             <UserBtn user={user} />
           </div>
         </nav>

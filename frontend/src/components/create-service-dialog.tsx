@@ -174,12 +174,12 @@ function ServiceForm({ open }: { open: boolean }) {
         setSuccess(true);
       } catch (error) {
         console.log(error);
-      } finally {
-        setLoading(false);
       }
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 

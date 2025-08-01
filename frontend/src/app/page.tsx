@@ -28,6 +28,14 @@ export default function Home() {
       '<iframe\n  src="localhost:3001/chat.html?userId=querymint-94033f21c2de4dafz&projectId=1b9df16c-bb99-470a-91df-45e77b667474&dataUrl=https%3A%2F%2Fgateway.pinata.cloud%2Fipfs%2Fbafkreicpkpg2ddblvigagvf3l6nd5s7f5ujkwtmocg5iopbpcelbeavziu"\n  width="300"\n  height="400"\n  style={{\n          position: "fixed",\n          bottom: "20px",\n          right: "20px",\n          border: "none",\n          zIndex: 9999,\n        }}\n></iframe>',
     name: "test1",
   };
+  console.log(
+    generateEmbedURL(
+      process.env.NEXT_PUBLIC_BACKEND_ENDPOINT ?? "",
+      userId,
+      service.id,
+      service.data_url
+    )
+  );
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <button
@@ -37,19 +45,7 @@ export default function Home() {
       >
         insertUser
       </button>
-      {/* <iframe
-        src="http://localhost:3001/chat.html?userId=querymint-0eebe8ee6e4b4645z&serviceId=976d27b9-7044-4640-acf7-f9276fb2f63c&dataUrl=https%3A%2F%2Fgateway.pinata.cloud%2Fipfs%2Fbafkreibjkqybrubdr2hm3dhsatmqqusfuu6l3yvvuephyd3kjgazsmkdc4"
-        width="300"
-        height="400"
-        style={{
-          position: "fixed",
-          backgroundColor: "transparent",
-          bottom: "20px",
-          right: "20px",
-          border: "none",
-          zIndex: 9999,
-        }}
-      ></iframe> */}
+
       <iframe
         src={generateEmbedURL(
           process.env.NEXT_PUBLIC_BACKEND_ENDPOINT ?? "",
@@ -57,6 +53,7 @@ export default function Home() {
           service.id,
           service.data_url
         )}
+        allowTransparency={true}
         width="300"
         height="400"
         style={{

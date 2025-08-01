@@ -16,12 +16,18 @@ import {
   ExternalLink,
   SquareArrowOutUpRightIcon,
   Star,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { RatingChart } from "@/components/rating-chart";
-import { calculateAvgRating, generateEmbedURL, getInitials } from "@/lib/utils";
+import {
+  calculateAvgRating,
+  fetchChatbyId,
+  generateEmbedURL,
+  getInitials,
+} from "@/lib/utils";
 import { RatingEntry } from "@/types/Ratings";
 import { NftTextIcon } from "@/assets";
 import {
@@ -32,12 +38,14 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { RATING_CONTRACT_ADDRESS } from "@/lib/constant";
+import { DeleteServiceDialog } from "@/components/delete-service-dialog";
 
 export default function Service() {
   const { fetchbyServiceId, fetchRatings, userId } = useUserData();
+  const [chatbotActive, setChatBotActive] = useState<Boolean>(false);
   const [service, setService] = useState<ServiceType | null>(null);
   const [ratings, setRatings] = useState<RatingEntry[]>([]);
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<any[] | null>([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -54,13 +62,11 @@ export default function Service() {
       const serviceId = service?.id;
       if (serviceId) {
         const ratingData = await fetchRatings(serviceId);
-        // console.log(ratingData)
+  
         setRatings(ratingData);
-
-        const res = await fetch(`/api/fetch-chat/${serviceId}`);
-        const chatData = await res.json();
-        setChats(chatData);
+        const chatData = await fetchChatbyId(serviceId);
         console.log(chatData);
+        setChats(chatData);
       }
     };
     fetchRatingData();
@@ -83,29 +89,55 @@ export default function Service() {
 
   return (
     <div className="flex flex-col gap-6">
-      <iframe
-        src={generateEmbedURL(
-          process.env.NEXT_PUBLIC_BACKEND_ENDPOINT ?? "",
-          userId,
-          service.id,
-          service.data_url
-        )}
-        width="300"
-        height="400"
-        style={{
-          position: "fixed",
-          backgroundColor: "transparent",
-          bottom: "20px",
-          right: "20px",
-          border: "none",
-          zIndex: 9999,
-        }}
-      ></iframe>
+      {chatbotActive && (
+        <>
+          <span
+            className="cursor-pointer"
+            style={{
+              position: "fixed",
+              color: "black",
+              bottom: "390px",
+              right: "25px",
+              border: "none",
+              zIndex: 10000,
+            }}
+            onClick={() => setChatBotActive(false)}
+          >
+            <X />
+          </span>
+          <iframe
+            src={generateEmbedURL(
+              process.env.NEXT_PUBLIC_BACKEND_ENDPOINT ?? "",
+              userId,
+              service.id,
+              service.data_url
+            )}
+            width="300"
+            height="400"
+            style={{
+              position: "fixed",
+              backgroundColor: "transparent",
+              bottom: "20px",
+              right: "20px",
+              border: "none",
+              zIndex: 9999,
+            }}
+          />
+        </>
+      )}
       <div className="flex justify-between items-center ">
-        <span>Service Details</span>{" "}
-        <Button className="" size={"lg"}>
-          <BotIcon size={48} /> Test Chatbot
-        </Button>
+        <span>Service Details</span>
+        <div className="flex gap-3">
+          {id && <DeleteServiceDialog id={id.toLocaleString()} />}
+          <Button
+            className=""
+            size={"lg"}
+            onClick={() => setChatBotActive(!chatbotActive)}
+          >
+            <BotIcon size={48} />{" "}
+            {chatbotActive ? "Close ChatBot" : "Test Chatbot"}
+          </Button>
+        </div>
       </div>
       <Card className="w-full">
         <CardHeader className="relative flex gap-6 ">
@@ -166,7 +198,7 @@ export default function Service() {
           <CardHeader className="w-full flex flex-col gap-3">
             <CardDescription>Total customer interactions</CardDescription>
             <CardTitle className="text-4xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {chats.length}
+              {chats ? chats.length : 0}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-3 text-sm">
@@ -231,8 +263,9 @@ export default function Service() {
                           <Link
                             href={`https://explorer-holesky.morphl2.io/token/${RATING_CONTRACT_ADDRESS}/instance/${ratingToken}`}
                             target="_blank"
+                            className="flex gap-1"
                           >
-                            {rating} <Star />
+                            <span className="leading-4">{rating}</span> <Star />
                           </Link>
                         </Button>
                       )}
