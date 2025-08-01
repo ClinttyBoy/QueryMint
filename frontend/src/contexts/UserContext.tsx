@@ -122,7 +122,6 @@ const UserDataProviderFn = () => {
       return approveReceipt;
     } catch (e) {
       console.log(e);
-      // console.log(e.name);
     }
   };
 

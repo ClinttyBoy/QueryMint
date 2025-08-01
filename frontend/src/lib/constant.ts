@@ -1,6 +1,31 @@
 export const RATING_CONTRACT_ADDRESS =
-  "0xaaE5cEbEC8e9DEDbb4a6A58De09987Fa7b1e7859";
+  "0x0A6659d7735f34a10fB793964cc55e970086FBc9";
+
+export const SUBSCRIPTION_CONTRACT_ADDRESS =
+  "0xBE3cE274e3A121B98328b48E577800f19d1141C1";
+
+export const GOLD_SKY_ENDPOINT =
+  "https://api.goldsky.com/api/public/project_cmdfoml8oe36t01w86ddu6dl8/subgraphs/morphtest-morph-testnet/1.0.0/gn";
+
 export const RATING_CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "approve",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -108,6 +133,40 @@ export const RATING_CONTRACT_ABI = [
     ],
     name: "ERC721NonexistentToken",
     type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint8",
+        name: "rating",
+        type: "uint8",
+      },
+      {
+        internalType: "string",
+        name: "serviceId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "tokenURI",
+        type: "string",
+      },
+    ],
+    name: "mintRatingNFT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
@@ -233,6 +292,64 @@ export const RATING_CONTRACT_ABI = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "safeTransferFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+    ],
+    name: "safeTransferFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -250,7 +367,7 @@ export const RATING_CONTRACT_ABI = [
       {
         indexed: false,
         internalType: "string",
-        name: "projectId",
+        name: "serviceId",
         type: "string",
       },
       {
@@ -266,8 +383,26 @@ export const RATING_CONTRACT_ABI = [
         type: "uint256",
       },
     ],
-    name: "ProjectRated",
+    name: "ServiceRated",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "approved",
+        type: "bool",
+      },
+    ],
+    name: "setApprovalForAll",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     anonymous: false,
@@ -298,6 +433,11 @@ export const RATING_CONTRACT_ABI = [
     inputs: [
       {
         internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "to",
         type: "address",
       },
@@ -307,7 +447,20 @@ export const RATING_CONTRACT_ABI = [
         type: "uint256",
       },
     ],
-    name: "approve",
+    name: "transferFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -374,7 +527,7 @@ export const RATING_CONTRACT_ABI = [
           },
           {
             internalType: "string",
-            name: "projectId",
+            name: "serviceId",
             type: "string",
           },
           {
@@ -383,7 +536,7 @@ export const RATING_CONTRACT_ABI = [
             type: "uint256",
           },
         ],
-        internalType: "struct ProjectRatingNFT.ProjectRating",
+        internalType: "struct ServiceRatingNFT.ServiceRating",
         name: "",
         type: "tuple",
       },
@@ -413,34 +566,6 @@ export const RATING_CONTRACT_ABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint8",
-        name: "rating",
-        type: "uint8",
-      },
-      {
-        internalType: "string",
-        name: "projectId",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "tokenURI",
-        type: "string",
-      },
-    ],
-    name: "mintRatingNFT",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -510,7 +635,7 @@ export const RATING_CONTRACT_ABI = [
       },
       {
         internalType: "string",
-        name: "projectId",
+        name: "serviceId",
         type: "string",
       },
       {
@@ -520,82 +645,6 @@ export const RATING_CONTRACT_ABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "safeTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
-    ],
-    name: "safeTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "approved",
-        type: "bool",
-      },
-    ],
-    name: "setApprovalForAll",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -662,47 +711,7 @@ export const RATING_CONTRACT_ABI = [
     stateMutability: "view",
     type: "function",
   },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "transferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
 ];
-
-export const SUBSCRIPTION_CONTRACT_ADDRESS =
-  "0xBE3cE274e3A121B98328b48E577800f19d1141C1";
-
 export const SUBSCRIPTION_CONTRACT_ABI = [
   {
     inputs: [
@@ -1463,6 +1472,3 @@ export const SUBSCRIPTION_CONTRACT_ABI = [
     type: "function",
   },
 ];
-
-export const GOLD_SKY_ENDPOINT =
-  "https://api.goldsky.com/api/public/project_cmdfoml8oe36t01w86ddu6dl8/subgraphs/morphtest-morph-testnet/1.0.0/gn";

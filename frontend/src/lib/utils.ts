@@ -167,17 +167,26 @@ export const createJsonFileFromDocs = (
   return new File([json], filename, { type: "application/json" });
 };
 
-export function generateEmbedIframe(
+export const generateEmbedURL = (
   endpoint: string,
   userId: string,
-  projectId: string,
+  serviceId: string,
   data_url: string
-): string {
-  const src = `${endpoint}/chat.html?userId=${encodeURIComponent(
+) => {
+  return `${endpoint}/chat.html?userId=${encodeURIComponent(
     userId
-  )}&serviceId=${encodeURIComponent(projectId)}&dataUrl=${encodeURIComponent(
+  )}&serviceId=${encodeURIComponent(serviceId)}&dataUrl=${encodeURIComponent(
     data_url
   )}`;
+};
+
+export const generateEmbedIframe = (
+  endpoint: string,
+  userId: string,
+  serviceId: string,
+  data_url: string
+) => {
+  const src = generateEmbedURL(endpoint, userId, serviceId, data_url);
 
   return `<iframe
   src="${src}"
@@ -191,7 +200,7 @@ export function generateEmbedIframe(
           zIndex: 9999,
         }}
 ></iframe>`;
-}
+};
 
 export function calculateAvgRating(data: RatingEntry[]): number {
   const numeric = data.map((r) => parseFloat(r.rating));

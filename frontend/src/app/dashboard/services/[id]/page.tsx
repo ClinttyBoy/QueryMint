@@ -21,7 +21,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { RatingChart } from "@/components/rating-chart";
-import { calculateAvgRating, getInitials } from "@/lib/utils";
+import { calculateAvgRating, generateEmbedURL, getInitials } from "@/lib/utils";
 import { RatingEntry } from "@/types/Ratings";
 import { NftTextIcon } from "@/assets";
 import {
@@ -31,9 +31,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { RATING_CONTRACT_ADDRESS } from "@/lib/constant";
 
 export default function Service() {
-  const { fetchbyServiceId, fetchRatings } = useUserData();
+  const { fetchbyServiceId, fetchRatings, userId } = useUserData();
   const [service, setService] = useState<ServiceType | null>(null);
   const [ratings, setRatings] = useState<RatingEntry[]>([]);
   const [chats, setChats] = useState([]);
@@ -42,7 +43,7 @@ export default function Service() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchbyServiceId(id as string);
-      // console.log(data.service);
+      console.log(data.service);
       setService(data.service);
     };
     fetchData();
@@ -53,7 +54,7 @@ export default function Service() {
       const serviceId = service?.id;
       if (serviceId) {
         const ratingData = await fetchRatings(serviceId);
-        console.log(ratingData)
+        // console.log(ratingData)
         setRatings(ratingData);
 
         const res = await fetch(`/api/fetch-chat/${serviceId}`);
@@ -82,6 +83,24 @@ export default function Service() {
 
   return (
     <div className="flex flex-col gap-6">
+      <iframe
+        src={generateEmbedURL(
+          process.env.NEXT_PUBLIC_BACKEND_ENDPOINT ?? "",
+          userId,
+          service.id,
+          service.data_url
+        )}
+        width="300"
+        height="400"
+        style={{
+          position: "fixed",
+          backgroundColor: "transparent",
+          bottom: "20px",
+          right: "20px",
+          border: "none",
+          zIndex: 9999,
+        }}
+      ></iframe>
       <div className="flex justify-between items-center ">
         <span>Service Details</span>{" "}
         <Button className="" size={"lg"}>
@@ -180,7 +199,7 @@ export default function Service() {
         {chats && chats.length > 0
           ? chats
               // .slice(startIndex, endIndex)
-              .map(({ id, txId, question, answer, rating }) => (
+              .map(({ id, txId, question, answer, rating, ratingToken }) => (
                 <Card className="relative w-full gap-1 p-3" key={id}>
                   <CardHeader className="px-3">
                     <h3 className=" m-0 p-0">{question}</h3>
@@ -209,7 +228,12 @@ export default function Service() {
                           variant={"ghost"}
                           className="gap-1 p-0 w-10 h-10 m-0"
                         >
-                          {rating} <Star />
+                          <Link
+                            href={`https://explorer-holesky.morphl2.io/token/${RATING_CONTRACT_ADDRESS}/instance/${ratingToken}`}
+                            target="_blank"
+                          >
+                            {rating} <Star />
+                          </Link>
                         </Button>
                       )}
                     </CardAction>
