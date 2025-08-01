@@ -26,10 +26,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve chat.html at root
-app.get("/", (req: Request, res: Response) => {
-  res.sendFile("chat.html", { root: "./public" });
-});
 
 // POST /prompt route (for chat.html frontend)
 app.post("/prompt", async (req: Request, res: Response) => {
