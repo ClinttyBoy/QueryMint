@@ -129,7 +129,16 @@
         font-size: 0.8rem;
         border-radius: 15px;
         padding: 6px 10px;
-        /* border: 1px solid #ccc; */
+      }
+
+      .star-icon {
+        display: inline-block;
+        transition: transform 0.2s ease;
+        cursor: pointer;
+      }
+
+      .star-icon:hover {
+        transform: scale(1.2);
       }
     </style>
   </head>
@@ -159,23 +168,21 @@
 
           <div id="chatbox"></div>
           <div id="rating-container">
-            Rate
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-star-icon lucide-star"
-            >
-              <path
-                d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
-              />
-            </svg>
+            <div id="rating-stars">
+              Rate:
+              <span onclick="rateChat(1)" class="star-icon">⭐</span>
+              <span onclick="rateChat(2)" class="star-icon">⭐</span>
+              <span onclick="rateChat(3)" class="star-icon">⭐</span>
+              <span onclick="rateChat(4)" class="star-icon">⭐</span>
+              <span onclick="rateChat(5)" class="star-icon">⭐</span>
+            </div>
+
+            <div id="rating-status" style="display: none; margin-top: 8px">
+              <span id="rating-loader">⏳ Minting rating NFT...</span>
+              <span id="rating-success" style="display: none"
+                >✅ NFT Minted Successfully!</span
+              >
+            </div>
           </div>
 
           <div id="input-container">
@@ -205,11 +212,11 @@
     <script>
       const createId = () =>
         `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-      let conversationId = null;
+      let conversationId = createId();
 
       const urlParams = new URLSearchParams(window.location.search);
       const userId = urlParams.get("userId");
-      const projectId = urlParams.get("projectId");
+      const serviceId = urlParams.get("serviceId");
       const dataUrl = urlParams.get("dataUrl");
 
       const chatbox = document.getElementById("chatbox");
@@ -225,6 +232,10 @@
       }
 
       async function send() {
+        if (!userId || !serviceId) {
+          console.log("Missing required fields");
+          return;
+        }
         const msg = input.value.trim();
         if (!msg) return;
         conversationId = createId();
@@ -235,7 +246,13 @@
           const res = await fetch("/prompt", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: msg, userId, projectId, dataUrl }),
+            body: JSON.stringify({
+              prompt: msg,
+              userId,
+              serviceId,
+              dataUrl,
+              conversationId,
+            }),
           });
 
           console.log(res);
@@ -252,6 +269,10 @@
       });
 
       async function rateChat(rating) {
+        if (!conversationId || !userId || !serviceId) {
+          console.log("Missing required fields");
+          return;
+        }
         try {
           const res = await fetch("/rate", {
             method: "POST",
@@ -259,18 +280,73 @@
             body: JSON.stringify({
               rating,
               userId,
-              projectId,
+              serviceId,
               conversationId,
-              timestamp: Date.now(),
             }),
           });
-          if (res.ok) {
-            alert("Thanks for rating!");
-          } else {
-            alert("Failed to submit rating.");
+
+          const data = await res.json();
+
+          if (data.status) {
+            ratingbox.style.display = "none";
           }
         } catch (err) {
           console.error("Rating error", err);
+        }
+      }
+
+      async function rateChat(rating) {
+        if (!conversationId || !userId || !serviceId) {
+          console.log("Missing required fields");
+          return;
+        }
+        const statusContainer = document.getElementById("rating-status");
+        const loader = document.getElementById("rating-loader");
+        const success = document.getElementById("rating-success");
+        const stars = document.getElementById("rating-stars");
+
+        // Reset UI
+        statusContainer.style.display = "block";
+        loader.style.display = "inline";
+        loader.textContent = "⏳ Minting rating NFT...";
+        success.style.display = "none";
+        stars.style.pointerEvents = "none";
+
+        try {
+          // Show loader
+          statusContainer.style.display = "block";
+          loader.style.display = "inline";
+          success.style.display = "none";
+          stars.style.pointerEvents = "none"; // Disable clicking again
+
+          const res = await fetch("/rate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              rating,
+              userId,
+              serviceId,
+              conversationId,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.status) {
+            loader.style.display = "none";
+            success.style.display = "inline";
+
+            setTimeout(() => {
+              statusContainer.style.display = "none";
+              stars.style.pointerEvents = "auto";
+              ratingbox.style.display = "none";
+            }, 3000);
+          } else {
+            loader.textContent = "❌ Failed to mint NFT.";
+          }
+        } catch (err) {
+          console.error("Rating error", err);
+          loader.textContent = "❌ Error minting NFT.";
         }
       }
     </script>

@@ -118,6 +118,8 @@ const Navbar = ({
       }
     }
   };
+
+  // console.log(`${Date.now()}-${Math.floor(Math.random() * 1000)}`);
   return (
     <section className="w-full px-6 py-4 mb-6 border dark:border-slate-700/70">
       <div className="w-full ">

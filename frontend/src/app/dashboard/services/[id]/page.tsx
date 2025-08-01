@@ -53,6 +53,7 @@ export default function Service() {
       const serviceId = service?.id;
       if (serviceId) {
         const ratingData = await fetchRatings(serviceId);
+        console.log(ratingData)
         setRatings(ratingData);
 
         const res = await fetch(`/api/fetch-chat/${serviceId}`);
@@ -175,7 +176,7 @@ export default function Service() {
         <RatingChart ratings={ratings} />
       </div>
       <h2>Chat History</h2>
-      <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto">
+      <div className="flex flex-col gap-3 max-h-[500px] overflow-y-auto">
         {chats && chats.length > 0
           ? chats
               // .slice(startIndex, endIndex)

@@ -175,7 +175,7 @@ export function generateEmbedIframe(
 ): string {
   const src = `${endpoint}/chat.html?userId=${encodeURIComponent(
     userId
-  )}&projectId=${encodeURIComponent(projectId)}&dataUrl=${encodeURIComponent(
+  )}&serviceId=${encodeURIComponent(projectId)}&dataUrl=${encodeURIComponent(
     data_url
   )}`;
 

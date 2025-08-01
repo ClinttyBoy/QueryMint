@@ -3,7 +3,14 @@ import express, { Request, Response } from "express";
 import { fetchVector } from "./pinata";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { buildGraph, embeddings } from "./chatbot";
-import { fetchUserByID, getActiveSubcription, payforQuery } from "./utils";
+import {
+  addChatData,
+  addRatingToDB,
+  fetchUserByID,
+  getActiveSubcription,
+  mintRatingNFT,
+  payforQuery,
+} from "./utils";
 import { createAccount } from "./biconomy";
 
 const app = express();
@@ -26,8 +33,14 @@ app.get("/", (req: Request, res: Response) => {
 
 // POST /prompt route (for chat.html frontend)
 app.post("/prompt", async (req: Request, res: Response) => {
-  const { prompt, dataUrl, userId, projectId } = req.body;
-  console.log("Prompt request:", { prompt, dataUrl, userId, projectId });
+  const { prompt, dataUrl, userId, serviceId, conversationId } = req.body;
+  console.log("Prompt request:", {
+    prompt,
+    dataUrl,
+    userId,
+    serviceId,
+    conversationId,
+  });
 
   if (!dataUrl || !prompt) {
     return res
@@ -46,11 +59,11 @@ app.post("/prompt", async (req: Request, res: Response) => {
   const saAddress = await smartAccount.getAccountAddress();
   console.log("address", saAddress);
   const isActiveSubscription = await getActiveSubcription(saAddress);
-
+  let txId = null;
   if (!isActiveSubscription) {
     console.log("paying for query");
-    const result = await payforQuery(smartAccount);
-    if (!result) {
+    txId = await payforQuery(smartAccount);
+    if (!txId) {
       return res
         .status(400)
         .json({ reply: "Please add funds to your QueryMint account!" });
@@ -71,12 +84,53 @@ app.post("/prompt", async (req: Request, res: Response) => {
     const graph = await buildGraph(vectorStore);
 
     const result = await graph.invoke({ question: prompt });
+    await addChatData({
+      id: conversationId,
+      question: prompt,
+      service_id: serviceId,
+      answer: result.answer,
+      txId,
+    });
     console.log("AI Response:", result.answer);
     res.status(200).json({ reply: result.answer });
   } catch (err) {
     console.error("Chat error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+app.post("/rate", async (req: Request, res: Response) => {
+  const { rating, userId, serviceId, conversationId } = req.body;
+
+  if (!rating || !conversationId || !userId) {
+    return res.status(400).json({ error: "Missing required fields." });
+  }
+
+  const userID = await fetchUserByID(userId);
+  console.log("userIndex", userID);
+  const smartAccount = await createAccount(userID);
+
+  if (!userID || !smartAccount) {
+    return res.status(400).json({ error: "Unable to find user are required!" });
+  }
+  const address = await smartAccount.getAccountAddress();
+
+  // Store this in a DB — for now, just log
+  const tokenId = await mintRatingNFT(smartAccount, address, rating, serviceId);
+  if (!tokenId) {
+    return res.status(400).json({ error: "Error in Rating NFT minting!" });
+  }
+  await addRatingToDB(conversationId, rating, Number(tokenId));
+  console.log("Rating received:", {
+    rating,
+    userId,
+    serviceId,
+    conversationId,
+  });
+
+  // TODO: Save this in a `chat_ratings` or `conversation_feedback` table
+
+  res.status(200).json({ message: "Rating received", status: true });
 });
 
 app.listen(PORT, () => {
