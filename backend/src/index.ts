@@ -133,6 +133,10 @@ app.post("/rate", async (req: Request, res: Response) => {
   res.status(200).json({ message: "Rating received", status: true });
 });
 
+app.get("/test", (req, res) => {
+  res.json({ message: "Its working!" });
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Server is running at http://localhost:${PORT}`);
 });
