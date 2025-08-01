@@ -1,9 +1,0 @@
-{
-  "name": "QueryMint 3-Star Service Badge",
-  "description": "Awarded for rating the service with 3 stars.",
-  "image": "https://gateway.pinata.cloud/ipfs/bafkreig2dnwhmo7346abxyzotbiy3frmcsxe5cv3jpwv3zthhid2ajf3sy",
-  "attributes": [
-    { "trait_type": "Rating", "value": "3" },
-    { "trait_type": "Service", "value": "QueryMint" }
-  ]
-}
