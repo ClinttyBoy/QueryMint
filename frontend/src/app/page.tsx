@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowUpRight, CirclePlay } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ProjectFlow } from "@/assets";
 
 export default function Home() {
   return (
@@ -62,9 +63,9 @@ export default function Home() {
           responses are accurate and based on the user's unique content. Smart,
           affordable support—on autopilot.
         </div>
-        {/* <div className="w-full max-w-screen-xl mx-auto aspect-video bg-accent rounded-xl overflow-hidden">
-          <img src={ProjectFlow.src} />
-        </div> */}
+        <div className="w-full max-w-screen-xl mx-auto aspect-video bg-accent rounded-xl overflow-hidden">
+          <img src={ProjectFlow.src} className="h-full" />
+        </div>
       </div>
     </div>
   );

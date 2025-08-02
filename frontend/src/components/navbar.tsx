@@ -91,6 +91,12 @@ const Navbar = ({ menu = [{ title: "Home", url: "/" }] }: NavbarProps) => {
                 >
                   Dashboard
                 </NavigationMenuLink>
+                <NavigationMenuLink
+                  href={"/"}
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
+                >
+                  Home
+                </NavigationMenuLink>
               </NavigationMenu>
             </div>
           </div>
