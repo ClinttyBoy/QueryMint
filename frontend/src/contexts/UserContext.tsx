@@ -143,11 +143,11 @@ const UserDataProviderFn = () => {
     }
   };
 
-  const fetchRatings = async (projectId: string) => {
-    console.log("projectID: " + projectId);
+  const fetchRatings = async (serviceId: string) => {
+    console.log("serviceId: " + serviceId);
     const query = `
       query MyQuery {
-        projectRateds(where: {projectId: "${projectId}"}) {
+        serviceRateds(where: {serviceId: "${serviceId}"}) {
           rating
         }
       }
@@ -162,8 +162,8 @@ const UserDataProviderFn = () => {
     });
 
     const result = await response.json();
-    // console.log(result.data.projectRateds);
-    return result.data.projectRateds;
+    // console.log(result.data.serviceRateds);
+    return result.data.serviceRateds;
   };
 
   useEffect(() => {

@@ -78,6 +78,7 @@ export default function Service() {
   }, [service, setChatBotActive]);
 
   const memoizedAvgRating = useMemo(
+    // () => [],
     () => calculateAvgRating(ratings),
     [ratings, service]
   );
