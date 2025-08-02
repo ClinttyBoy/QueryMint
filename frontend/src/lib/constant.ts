@@ -5,7 +5,7 @@ export const SUBSCRIPTION_CONTRACT_ADDRESS =
   "0xBE3cE274e3A121B98328b48E577800f19d1141C1";
 
 export const GOLD_SKY_ENDPOINT =
-  "https://api.goldsky.com/api/public/project_cmdfoml8oe36t01w86ddu6dl8/subgraphs/morphtest-morph-testnet/1.0.0/gn";
+  "https://api.goldsky.com/api/public/project_cmdfoml8oe36t01w86ddu6dl8/subgraphs/name-morph-testnet/version/gn";
 
 export const RATING_CONTRACT_ABI = [
   {
