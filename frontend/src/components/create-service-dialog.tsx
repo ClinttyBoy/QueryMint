@@ -47,45 +47,22 @@ import { Card } from "./ui/card";
 
 const dummyModelData = [
   {
-    id: "model-2",
-    name: "Gemini 2.5 ",
-    provider: "Google",
-    description: "Google's latest model",
-    badge: "new",
+    id: "model-1",
+    name: "GPT-4",
+    provider: "OpenAI",
+    description: "OpenAI's flagship model known for advanced reasoning",
   },
   {
-    id: "model-10",
-    name: "Titan Text G1",
-    provider: "Amazon",
-    description: "Amazon's native Bedrock-hosted model",
+    id: "model-2",
+    name: "Claude 3 Opus",
+    provider: "Anthropic",
+    description: "Anthropic’s top-tier model with long context handling",
   },
   {
     id: "model-3",
-    name: "Grok 3 Beta",
-    provider: "xAI",
-    description: "xAI's latest model",
-  },
-
-  {
-    id: "model-5",
-    name: "GPT-o3",
-    provider: "OpenAI",
-    description: "OpenAI’s most powerful reasoning model",
-    selected: true,
-  },
-
-  {
-    id: "model-7",
-    name: "Claude 3 Opus",
-    provider: "Anthropic",
-    description: "Anthropic’s most capable model with long context",
-  },
-
-  {
-    id: "model-9",
-    name: "LLaMA 3 70B",
-    provider: "Meta",
-    description: "Meta’s open-weight high-performance model",
+    name: "Gemini 1.5 Pro",
+    provider: "Google",
+    description: "Google’s general-purpose multimodal model",
   },
 ];
 
