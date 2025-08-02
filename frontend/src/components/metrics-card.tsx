@@ -12,8 +12,13 @@ import { Button } from "./ui/button";
 import { Copy } from "lucide-react";
 
 export default function MetricsCard() {
-  const { address, balance, subscriptionExpiry, NFTSubscriptionStatus } =
-    useUserData();
+  const {
+    address,
+    balance,
+    subscriptionExpiry,
+    NFTSubscriptionStatus,
+    interactionCount,
+  } = useUserData();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <Card className="w-full">
@@ -77,7 +82,7 @@ export default function MetricsCard() {
         <CardHeader>
           <CardDescription> Total Interactions</CardDescription>
           <CardTitle className="text-3xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {/* {sessionCnt} */}10
+            {interactionCount}
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">

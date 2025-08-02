@@ -59,7 +59,6 @@ export const fetchUserByID = async (user_id: string) => {
   return data;
 };
 
-
 export const fetchChatbyId = async (service_id: string) => {
   const { data, error } = await supabase
     .from("chat-sessions")
@@ -88,6 +87,20 @@ export const insertUser = async (email: string) => {
   return data[0];
 };
 
+export const fetchChatInteractions = async (list: string[]) => {
+  const { count, error } = await supabase
+    .from("chat-sessions") // your table name
+    .select("*", { count: "exact", head: true })
+    .in("service_id", list); // 'in' filters where serviceId is in the array
+
+  if (error) {
+    console.error("Error fetching chat sessions:", error.message);
+    return 0;
+  } else {
+    console.log("Fetched sessions:", count);
+    return count;
+  }
+};
 // ***************************************** || 0.001*******
 
 const QUERY_PRICE = Number(process.env.NEXT_PUBLIC_QUERY_PRICE) || 0.0002;

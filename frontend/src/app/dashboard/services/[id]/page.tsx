@@ -13,6 +13,7 @@ import { useUserData } from "@/contexts/UserContext";
 import { Service as ServiceType } from "@/types/Service";
 import {
   BotIcon,
+  Copy,
   ExternalLink,
   SquareArrowOutUpRightIcon,
   Star,
@@ -25,6 +26,7 @@ import { RatingChart } from "@/components/rating-chart";
 import {
   calculateAvgRating,
   fetchChatbyId,
+  generateEmbedIframe,
   generateEmbedURL,
   getInitials,
 } from "@/lib/utils";
@@ -79,6 +81,17 @@ export default function Service() {
     () => calculateAvgRating(ratings),
     [ratings, service]
   );
+  const generataIframeCode = async () => {
+    if (service) {
+      const code = generateEmbedIframe(
+        process.env.NEXT_PUBLIC_BACKEND_ENDPOINT!,
+        userId,
+        service?.id,
+        service?.data_url
+      );
+      await navigator.clipboard.writeText(code);
+    }
+  };
 
   if (!service) {
     return (
@@ -132,6 +145,13 @@ export default function Service() {
         <span>Service Details</span>
         <div className="flex gap-3">
           {id && <DeleteServiceDialog id={id.toLocaleString()} />}
+          <Button
+            variant={"secondary"}
+            size={"lg"}
+            onClick={generataIframeCode}
+          >
+            <Copy size={48} /> Embbed Code
+          </Button>
           <Button
             className=""
             size={"lg"}

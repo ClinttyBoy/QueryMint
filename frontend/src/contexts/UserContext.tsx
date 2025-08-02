@@ -4,7 +4,13 @@ import {
   SUBSCRIPTION_CONTRACT_ABI,
   SUBSCRIPTION_CONTRACT_ADDRESS,
 } from "@/lib/constant";
-import { fetchUserByID, formatBalance, hashEmail, supabase } from "@/lib/utils";
+import {
+  fetchChatInteractions,
+  fetchUserByID,
+  formatBalance,
+  hashEmail,
+  supabase,
+} from "@/lib/utils";
 import { wagmiConfig } from "@/lib/wagmiConfig";
 import { Service } from "@/types/Service";
 import { BiconomySmartAccountV2 } from "@biconomy/account";
@@ -28,6 +34,7 @@ const UserDataProviderFn = () => {
   const [userId, setUserId] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [balance, setBalance] = useState<number>(0);
+  const [interactionCount, setInteractionCount] = useState<number>(0);
   const [NFTSubscriptionStatus, setNFTSubscriptionStatus] =
     useState<boolean>(false);
   const [subscriptionExpiry, setSubscriptionExpiry] = useState<number | null>(
@@ -103,6 +110,17 @@ const UserDataProviderFn = () => {
     return data;
   };
 
+  const fetchInteractionCount = async () => {
+    if (!services) return;
+    const serviceIds = services.map((service) => service.id);
+    const data = await fetchChatInteractions(serviceIds);
+    if (data) setInteractionCount(data);
+  };
+
+  useEffect(() => {
+    fetchInteractionCount();
+  }, [services]);
+
   const subscribeNFTFunc = async (monthCount: number) => {
     try {
       const { request } = await simulateContract(wagmiConfig, {
@@ -173,6 +191,7 @@ const UserDataProviderFn = () => {
   return {
     userId,
     smartAccount,
+    interactionCount,
     address,
     balance,
     refreshBalance,
