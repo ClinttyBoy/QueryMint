@@ -65,7 +65,7 @@ function PaymentForm({ address, refreshNFTSubscriptionStatus }: PaymentProps) {
         value: parseEther(
           (
             Number(value) *
-            (Number(process.env.NEXT_PUBLIC_MONTH_PRICE) || 0.0002)
+            (Number(process.env.NEXT_PUBLIC_MONTH_PRICE) || 0.002)
           ).toString()
         ),
       });
@@ -88,7 +88,7 @@ function PaymentForm({ address, refreshNFTSubscriptionStatus }: PaymentProps) {
       console.log(e);
     } finally {
       setIsProcessing(false);
-      setValue("1");
+      // setValue("1");
     }
   }
 
