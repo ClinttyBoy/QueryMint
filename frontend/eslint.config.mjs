@@ -17,6 +17,7 @@ export default [
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-explicit-any":"off",
+      "@next/next/no-img-element":"off",
       "prefer-const": "off",
       "@typescript-eslint/no-wrapper-object-types": "off",
       "react-hooks/exhaustive-deps": "off", // Only if you're intentionally ignoring deps

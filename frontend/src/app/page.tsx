@@ -54,14 +54,14 @@ export default function Home() {
           </div>
         </div>
         <div className="max-w-6xl my-6 text-center text-[17px] md:text-lg">
-          Customer support is often expensive, unreliable, and difficult to
+          {`  Customer support is often expensive, unreliable, and difficult to
           personalize. QueryMint solves this by offering a plug-and-play AI
           support widget that website owners can embed instantly. Users can
           upload their own data, choose their preferred AI model, and pay only
           when a customer interacts—using microtransactions in ETH. Under the
           hood, QueryMint uses RAG (Retrieval-Augmented Generation) to ensure
           responses are accurate and based on the user's unique content. Smart,
-          affordable support—on autopilot.
+          affordable support—on autopilot.`}
         </div>
         <div className="w-full max-w-screen-xl mx-auto aspect-video bg-accent rounded-xl overflow-hidden">
           <img src={ProjectFlow.src} className="h-full" />
