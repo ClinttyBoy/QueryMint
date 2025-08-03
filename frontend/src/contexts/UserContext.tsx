@@ -121,7 +121,7 @@ const UserDataProviderFn = () => {
     fetchInteractionCount();
   }, [services]);
 
-  const subscribeNFTFunc = async (monthCount: number) => {
+  const  subscribeNFTFunc = async (monthCount: number) => {
     try {
       const { request } = await simulateContract(wagmiConfig, {
         abi: SUBSCRIPTION_CONTRACT_ABI,
