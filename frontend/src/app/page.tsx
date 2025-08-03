@@ -42,7 +42,7 @@ export default function Home() {
                 Get Started <ArrowUpRight className="!h-5 !w-5" />
               </Button>
             </Link>
-            <Link href={"#"} target="_blank">
+            <Link href={"https://youtu.be/HIqSP9R77uU"} target="_blank">
               <Button
                 variant="outline"
                 size="lg"
