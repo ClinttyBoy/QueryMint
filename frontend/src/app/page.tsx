@@ -29,7 +29,7 @@ export default function Home() {
             QueryMint
           </Badge>
           <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold !leading-[1.2] tracking-tight">
-            QueryMint: AI Powered Chat Support Service
+            QueryMint: AI Powered Web3 based Chat Support Service
           </h1>
           <p className="mt-6 text-[17px] md:text-lg">
             An AI-powered chat support platform that lets users embed smart bots
