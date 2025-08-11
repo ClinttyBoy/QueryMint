@@ -16,7 +16,6 @@ Customer support is often expensive, unreliable, or hard to set up for website o
 
 ****Querymint**** solves this problem by providing a plug-and-play AI support system where users can upload their own data and pay only when customers ask questions using microtransactions in Crypto or a **NFT based Subscription model**. This makes smart, personalized support affordable and easy to use. Under the hood, AI RAG (Retrieval-Augmented Generation) is used to ensure that responses are accurate and based on the user’s uploaded content.
 
-![image](https://gateway.pinata.cloud/ipfs/bafybeidkqditcebdufw2n556igpkpuupjzllmop3ivq3wfmkjconiknbpy)
 ![image](https://github.com/ClinttyBoy/QueryMint/blob/66029fe219ad4031883627e5e537be4f52c3ebb2/frontend/src/assets/3.png)
 Users can:
 
