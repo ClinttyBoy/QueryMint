@@ -57,8 +57,9 @@ function PaymentForm({ address, refreshNFTSubscriptionStatus }: PaymentProps) {
 
     try {
       setIsProcessing(true);
-      connect({ connector: injected(), chainId: morphHolesky.id });
+      connect({ connector: injected() });
       const { request } = await simulateContract(wagmiConfig, {
+        chainId: morphHolesky.id,
         abi: SUBSCRIPTION_CONTRACT_ABI,
         address: SUBSCRIPTION_CONTRACT_ADDRESS,
         functionName: "subscribe",
