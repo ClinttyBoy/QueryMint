@@ -36,6 +36,7 @@ import {
   SUBSCRIPTION_CONTRACT_ADDRESS,
 } from "@/lib/constant";
 import { parseEther } from "viem";
+import { morphHolesky } from "viem/chains";
 
 interface PaymentProps {
   address: string;
@@ -56,7 +57,7 @@ function PaymentForm({ address, refreshNFTSubscriptionStatus }: PaymentProps) {
 
     try {
       setIsProcessing(true);
-      connect({ connector: injected() });
+      connect({ connector: injected(), chainId: morphHolesky.id });
       const { request } = await simulateContract(wagmiConfig, {
         abi: SUBSCRIPTION_CONTRACT_ABI,
         address: SUBSCRIPTION_CONTRACT_ADDRESS,

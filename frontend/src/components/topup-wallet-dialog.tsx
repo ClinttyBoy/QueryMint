@@ -46,7 +46,7 @@ function PaymentForm({ address, refreshBalance }: PaymentProps) {
     if (!address) return;
     try {
       setIsProcessing(true);
-      connect({ connector: injected() });
+      connect({ connector: injected(), chainId: morphHolesky.id });
       const result = await sendTransaction(wagmiConfig, {
         to: address as `0x${string}`,
         value: parseEther(value),
