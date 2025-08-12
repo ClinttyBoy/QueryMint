@@ -54,7 +54,6 @@ function PaymentForm({ address, refreshNFTSubscriptionStatus }: PaymentProps) {
     event.preventDefault();
     if (!isFloatString(value)) return;
     if (!address) return;
-
     try {
       setIsProcessing(true);
       connect({ connector: injected() });
@@ -88,6 +87,7 @@ function PaymentForm({ address, refreshNFTSubscriptionStatus }: PaymentProps) {
       );
     } catch (e) {
       console.log(e);
+      toast(`Please switched to Morph Holesky chain.`);
     } finally {
       setIsProcessing(false);
       // setValue("1");

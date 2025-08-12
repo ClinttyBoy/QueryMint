@@ -35,7 +35,6 @@ interface PaymentProps {
 
 function PaymentForm({ address, refreshBalance }: PaymentProps) {
   const { connect } = useConnect();
-
   const [value, setValue] = useState<string>("0.0001");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
@@ -47,6 +46,7 @@ function PaymentForm({ address, refreshBalance }: PaymentProps) {
     try {
       setIsProcessing(true);
       connect({ connector: injected() });
+
       const result = await sendTransaction(wagmiConfig, {
         chainId: morphHolesky.id,
         to: address as `0x${string}`,
@@ -65,6 +65,7 @@ function PaymentForm({ address, refreshBalance }: PaymentProps) {
       setSuccess(true);
     } catch (error) {
       console.error(error);
+      toast(`Please switched to Morph Holesky chain.`);
     } finally {
       setIsProcessing(false);
       // setValue("0.0001");
