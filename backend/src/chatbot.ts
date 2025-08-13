@@ -3,7 +3,6 @@ dotenv.config();
 import { z } from "zod";
 
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { BedrockEmbeddings } from "@langchain/aws";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { Document } from "@langchain/core/documents";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
@@ -16,15 +15,6 @@ const llm = new ChatGoogleGenerativeAI({
   temperature: 0,
 });
 
-//AI model
-export const embeddings = new BedrockEmbeddings({
-  model: "amazon.titan-embed-text-v1",
-  region: process.env.BEDROCK_AWS_REGION || "",
-  credentials: {
-    accessKeyId: process.env.BEDROCK_AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.BEDROCK_AWS_SECRET_ACCESS_KEY || "",
-  },
-});
 
 const InputSchema = z.object({
   question: z.string(),

@@ -14,8 +14,8 @@
   "type": "commonjs",
   "dependencies": {
     "@biconomy/account": "^4.5.7",
-    "@langchain/aws": "^0.1.12",
-    "@langchain/core": "^0.3.66",
+    "@google/generative-ai": "^0.24.1",
+    "@langchain/core": "^0.3.70",
     "@langchain/google-genai": "^0.2.16",
     "@langchain/langgraph": "^0.4.0",
     "@supabase/supabase-js": "^2.53.0",

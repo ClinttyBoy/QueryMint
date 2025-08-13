@@ -2,7 +2,7 @@
 import express, { Request, Response } from "express";
 import { fetchVector } from "./pinata";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { buildGraph, embeddings } from "./chatbot";
+import { buildGraph } from "./chatbot";
 import {
   addChatData,
   addRatingToDB,
@@ -12,6 +12,7 @@ import {
   payforQuery,
 } from "./utils";
 import { createAccount } from "./biconomy";
+import { embeddings } from "./embeddings";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
