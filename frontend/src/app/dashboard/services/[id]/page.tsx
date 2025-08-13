@@ -42,7 +42,7 @@ import {
 import { RATING_CONTRACT_ADDRESS } from "@/lib/constant";
 import { DeleteServiceDialog } from "@/components/delete-service-dialog";
 
-const rowsPerPage = 3;
+const rowsPerPage = 5;
 export default function Service() {
   const { fetchbyServiceId, fetchRatings, userId } = useUserData();
   const [chatbotActive, setChatBotActive] = useState<Boolean>(false);
@@ -254,7 +254,7 @@ export default function Service() {
       <div className="flex flex-col gap-3 max-h-[500px] overflow-y-auto">
         {chats && chats.length > 0
           ? chats
-              // .slice(startIndex, endIndex)
+              .slice(startIndex, endIndex)
               .map(({ id, txId, question, answer, rating, ratingToken }) => (
                 <Card className="relative w-full gap-1 p-3" key={id}>
                   <CardHeader className="px-3">
